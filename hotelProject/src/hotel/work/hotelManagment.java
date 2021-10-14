@@ -14,7 +14,13 @@ public class hotelManagment {
 		
 		String userChoice = " ";
 		
+		// début du menu pour un employé
         while(userChoice.toUpperCase() != "Q"){
+        	
+    		if(userChoice.equalsIgnoreCase("Q")) { // Pour sortir du while
+    			break;
+    		}
+    		
             System.out.println("");
             System.out.println("----------------------------------------  MENU HOTEL CDA JAVA  ----------------------------------------");
             System.out.println("A - Afficher l’état de l’hôtel");
@@ -35,19 +41,35 @@ public class hotelManagment {
 
 			switch(userChoice.toUpperCase()){
 				case "A" :
+					System.out.println("test A");
+					break;
 				case "B" :
+					System.out.println("test B");
+					break;
 				case "C" :
+					System.out.println("test C");
+					break;
 				case "D" :
+					System.out.println("test D");
+					break;
 				case "E" :
+					System.out.println("test E");
+					break;
 				case "F" :
+					System.out.println("test F");
+					break;
 				case "G" :
+					System.out.println("test G");
+					break;
 				case "H" :
+					System.out.println("test H");
+					break;
 				case "I" :
-				case "Q" :
-					in.close();
+					System.out.println("test I");
 					break;
 			}
         }
+        // fin du menu pour un employé
 		
 	}
 	
