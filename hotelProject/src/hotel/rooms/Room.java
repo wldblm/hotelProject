@@ -6,23 +6,21 @@ public class Room {
 	private String roomType;
 	private String view;
 	
-	private int maxAdult;
-	private int maxChild;
-	private int size;
+	private String maxPer;
+	private String size;
 	
-	private double price;
+	private String price;
 	
 	private String options[];
 	
 	private Customer customers[];
 	
-	public Room(String roomType, String view, int maxAdult, int maxChild, int size, double price, String options[]) {
+	public Room(String roomType, String view,String maxPer , String size, String price, String options[]) {
 		setRoomType(roomType);
 		setView(view);
 		setSize(size);
+		setMaxPer(maxPer);
 		setPrice(price);
-		setMaxChild(maxChild);
-		setMaxAdult(maxAdult);
 		setOptions(options);
 		customers = new Customer[3];
 	}
@@ -43,35 +41,20 @@ public class Room {
 		this.view = view;
 	}
 
-	public int getMaxAdult() {
-		return maxAdult;
-	}
 
-	public void setMaxAdult(int maxAdult) {
-		this.maxAdult = maxAdult;
-	}
-
-	public int getMaxChild() {
-		return maxChild;
-	}
-
-	public void setMaxChild(int maxChild) {
-		this.maxChild = maxChild;
-	}
-
-	public int getSize() {
+	public String getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 
-	public double getPrice() {
+	public String getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(String price) {
 		this.price = price;
 	}
 
@@ -89,6 +72,14 @@ public class Room {
 
 	public void setCustomers(Customer customers[]) {
 		this.customers = customers;
+	}
+
+	public String getMaxPer() {
+		return maxPer;
+	}
+
+	public void setMaxPer(String maxPer) {
+		this.maxPer = maxPer;
 	}
 	
 	
