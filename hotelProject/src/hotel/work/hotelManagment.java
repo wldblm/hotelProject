@@ -14,7 +14,7 @@ public class hotelManagment {
 		
 		String userChoice = " ";
 		
-		// d�but du menu pour un employ�
+		// début du menu pour un employé
         while(userChoice.toUpperCase() != "Q"){
         	
     		if(userChoice.equalsIgnoreCase("Q")) { // Pour sortir du while
@@ -24,15 +24,15 @@ public class hotelManagment {
     		
             System.out.println("");
             System.out.println("----------------------------------------  MENU HOTEL CDA JAVA  ----------------------------------------");
-            System.out.println("A - Afficher l��tat de l�h�tel");
-            System.out.println("B - Afficher le nombre de chambres r�serv�es");
+            System.out.println("A - Afficher l'état de l'hôtel");
+            System.out.println("B - Afficher le nombre de chambres réservées");
             System.out.println("C - Afficher le nombre de chambres libres");
-            System.out.println("D - Afficher le num�ro de la premi�re chambre vide");
-            System.out.println("E - Afficher le num�ro de la derni�re chambre vide");
-            System.out.println("F - R�server une chambre (Le programme doit r�server la premi�re chambre videselon les crit�res choisis)");
-            System.out.println("G - Lib�rer une chambre (Le programme doit lib�rer la chambre en utilisant le num�ro de chambre ou le nom du client)");
-            System.out.println("H - Modifier une r�servation");
-            System.out.println("I - Annuler une r�servation");
+            System.out.println("D - Afficher le numéro de la première chambre vide");
+            System.out.println("E - Afficher le numéro de la dernière chambre vide");
+            System.out.println("F - Réserver une chambre (Le programme doit réserver la première chambre videselon les critéres choisis)");
+            System.out.println("G - Libérer une chambre (Le programme doit libérer la chambre en utilisant le numéro de chambre ou le nom du client)");
+            System.out.println("H - Modifier une réservation");
+            System.out.println("I - Annuler une réservation");
             System.out.println("Q - Quitter");
             System.out.println("----------------------------------------  MENU HOTEL CDA JAVA  ----------------------------------------");
             System.out.println("");
@@ -70,7 +70,7 @@ public class hotelManagment {
 					break;
 			}
         }
-        // fin du menu pour un employ�
+        // fin du menu pour un employé
         
 		hotel = generate();
 
