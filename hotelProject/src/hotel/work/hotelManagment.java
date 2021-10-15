@@ -1,6 +1,7 @@
 package hotel.work;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import hotel.customers.Customer;
@@ -47,7 +48,7 @@ public class hotelManagment {
 					hotelStatus(in);
 					break;
 				case "B" :
-					System.out.println("test B");
+					occupiedRoom(in);
 					break;
 				case "C" :
 					System.out.println("test C");
@@ -118,15 +119,7 @@ public class hotelManagment {
 	}
 	
 	public void hotelStatus(Scanner in) {
-		// On recupère la date à laquelle on veut afficher l'état de l'hotel
-		System.out.println("Insérer l'année à laquelle vous souhaitez afficher l'état de l'hotel");
-		String year = in.next();
-		System.out.println("Insérer le mois ");
-		String month = in.next();
-		System.out.println("Insérer le jour ");
-		String day = in.next();
-		String date = year + "-" + month + "-" + day;
-					LocalDate response = LocalDate.parse(date);
+		LocalDate response = askDate(in);
 		for (int i = 0; i < hotel.length; i++) {
 			
 			Customer customers[] = hotel[i].getCustomers();
@@ -149,9 +142,52 @@ public class hotelManagment {
 		}
 	}
 	
-	public void occupiedRoom() {
+	public void occupiedRoom(Scanner in) {
+		// On recupère la date à laquelle on veut afficher les chambres occupée;
+		LocalDate response = askDate(in);	
+		boolean allFree = true;
+		int count = 0;
+		for (int i = 0; i < hotel.length; i++) {
+			
+			Customer customers[] = hotel[i].getCustomers();
+			LocalDate startDates[] = hotel[i].getStartDates();
+			LocalDate endDates[] = hotel[i].getEndDates();
+			
+			// // si la date donnée est entre la date de debut et de fin alors la chambre est occupée
+			for (int j = 0; j < customers.length; j++) {
+				if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
+					allFree = false;
+					count ++; // On incrémente un compteur
+					if(i == 64) {
+						System.out.println(count + " chambres réservées de type " + hotel[i].getRoomType());
+						break;
+					}
+					// Si la chambre d'apres n'est pas du meme type on afficher le nombre de chambre occupées du type actuel et on remet le compteur a 0
+					else if(!hotel[i].getRoomType().equals(hotel[i+1].getRoomType())) {
+						System.out.println(count + " chambres réservées de type " + hotel[i].getRoomType());
+						count = 0;
+					}
+				}
+				
+			}
+			
+		}
+		if(allFree) {
+			System.out.println("Toutes les chambres sont libres");
+		}
 		
 	}
 	
+	public LocalDate askDate(Scanner in) {
+		System.out.println("Insérer l'année à laquelle vous souhaitez afficher l'état de l'hotel");
+		String year = in.next();
+		System.out.println("Insérer le mois ");
+		String month = in.next();
+		System.out.println("Insérer le jour ");
+		String day = in.next();
+		String date = year + "-" + month + "-" + day;
+		LocalDate response = LocalDate.parse(date);
+		return response;
+	}
 	
 }
