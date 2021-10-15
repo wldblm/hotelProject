@@ -2,6 +2,7 @@ package hotel.work;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,13 +53,13 @@ public class hotelManagment {
 							hotelStatus(in);
 							break;
 						case "B" :
-							occupiedRoom(in);
+							getOccupiedRooms(in);
 							break;
 						case "C" :
-							firstFreeRoom(in);
+							getFreeRooms(in);
 							break;
 						case "D" :
-							System.out.println("test D");
+							firstFreeRoom(in);
 							break;
 						case "E" :
 							System.out.println("test E");
@@ -149,7 +150,7 @@ public class hotelManagment {
 		}
 	}
 	
-	public void occupiedRoom(Scanner in) {
+	public void getOccupiedRooms(Scanner in) {
 		// On recupère la date à laquelle on veut afficher les chambres occupée;
 		LocalDate response = askDate(in);	
 		boolean allFree = true;
@@ -186,9 +187,11 @@ public class hotelManagment {
 	}
 	
 	public void firstFreeRoom(Scanner  in) {
-		// On recupère la date à laquelle on veut afficher les chambres occupée;
+		
+		// On recupère la date à laquelle on veut afficher la chambre libre;
 				LocalDate response = askDate(in);	
 				boolean allOccupied = true;
+				boolean free = true;
 				for (int i = 0; i < hotel.length; i++) {
 					Customer customers[] = hotel[i].getCustomers();
 					LocalDate startDates[] = hotel[i].getStartDates();
@@ -197,13 +200,14 @@ public class hotelManagment {
 					// si la date donnée est entre la date de debut et de fin alors la chambre est occupée
 					for (int j = 0; j < customers.length; j++) {
 						if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
+							free = false;
 							break;
-						}
-						else {
-							System.out.println("La première chambre vide est la chambre numéro " + i + " de type " + hotel[i].getRoomType());
-							allOccupied = false;
-							break;
-						}
+						}		
+					}
+					if(free) {
+						System.out.println("La première chambre libre est la chambre numéro " + i + " de type " + hotel[i].getRoomType());
+						allOccupied = false;
+						break;
 					}
 					if(!allOccupied){
 						break;
@@ -212,6 +216,44 @@ public class hotelManagment {
 				if(allOccupied) {
 					System.out.println("Aucune chambre n'est libre");
 				}
+	}
+	
+	public void getFreeRooms(Scanner in) {
+		// On recupère la date à laquelle on veut afficher les chambres libre;
+		LocalDate response = askDate(in);
+		boolean allOccupied = true;
+		int count = 0;
+		boolean free = true;
+		
+		for (int i = 0; i < hotel.length; i++) {
+			Customer customers[] = hotel[i].getCustomers();
+			LocalDate startDates[] = hotel[i].getStartDates();
+			LocalDate endDates[] = hotel[i].getEndDates();
+			
+			for (int j = 0; j < customers.length; j++) {
+				
+				if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
+					allOccupied = false;
+					free = false;
+					break;
+				}
+			}
+			if(free) {
+				count ++;
+				if(i == 64) {
+					System.out.println(count + " chambres libre de type " + hotel[i].getRoomType());
+					break;
+				}
+				// Si la chambre d'apres n'est pas du meme type on afficher le nombre de chambre occupées du type actuel et on remet le compteur a 0
+				else if(!hotel[i].getRoomType().equals(hotel[i+1].getRoomType())) {
+					System.out.println(count + " chambres libre de type " + hotel[i].getRoomType());
+					count = 0;
+				}
+			}
+		}
+		if(allOccupied) {
+			System.out.println("Toutes les chambres sont occupées pour cette date");
+		}
 	}
 	
 	public LocalDate askDate(Scanner in) {
