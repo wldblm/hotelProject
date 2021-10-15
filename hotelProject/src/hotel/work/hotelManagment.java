@@ -9,7 +9,7 @@ public class hotelManagment {
 	private Room hotel[];
 	
 	public hotelManagment() {
-		
+		hotel = generate();
 		Scanner in = new Scanner(System.in);
 		
 		String userChoice = " ";
@@ -71,8 +71,6 @@ public class hotelManagment {
 			}
         }
         // fin du menu pour un employé
-        
-		hotel = generate();
 
 		
 	}
