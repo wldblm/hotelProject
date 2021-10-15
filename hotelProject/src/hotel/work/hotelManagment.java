@@ -44,7 +44,7 @@ public class hotelManagment {
 
 			switch(userChoice.toUpperCase()){
 				case "A" :
-					hotelStatus();
+					hotelStatus(in);
 					break;
 				case "B" :
 					System.out.println("test B");
@@ -117,17 +117,26 @@ public class hotelManagment {
 		return hotel;
 	}
 	
-	public void hotelStatus() {
+	public void hotelStatus(Scanner in) {
+		// On recupère la date à laquelle on veut afficher l'état de l'hotel
+		System.out.println("Insérer l'année à laquelle vous souhaitez afficher l'état de l'hotel");
+		String year = in.next();
+		System.out.println("Insérer le mois ");
+		String month = in.next();
+		System.out.println("Insérer le jour ");
+		String day = in.next();
+		String date = year + "-" + month + "-" + day;
+					LocalDate response = LocalDate.parse(date);
 		for (int i = 0; i < hotel.length; i++) {
-			// On recupère les clients de la chambre i ainsi que les dates de debut et de fin de séjour
+			
 			Customer customers[] = hotel[i].getCustomers();
 			LocalDate startDates[] = hotel[i].getStartDates();
 			LocalDate endDates[] = hotel[i].getEndDates();
 			boolean isFree = true;
 			
-			// si il y a au moins un client alors la chambre n'est pas "vide" donc on affiche les informations de la reservation 
+			// si la date donnée est entre la date de debut et de fin alors la chambre est occupée
 			for (int j = 0; j < customers.length; j++) {
-				if(customers[j] != null) {
+				if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
 					isFree = false;
 					System.out.println("La chambre " + i + " de type " + hotel[i].getRoomType() + " est occupé par " + customers[j].getFirstName() + " " + customers[j].getLastName() + " du " + startDates[j] + " au " + endDates[j]);
 				}
@@ -138,6 +147,10 @@ public class hotelManagment {
 				System.out.println("La chambre numéro " + i + " de type " + hotel[i].getRoomType() + " est libre.");
 			}
 		}
+	}
+	
+	public void occupiedRoom() {
+		
 	}
 	
 	
