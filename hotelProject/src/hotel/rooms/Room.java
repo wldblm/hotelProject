@@ -1,5 +1,7 @@
 package hotel.rooms;
 
+import java.time.LocalDate;
+
 import hotel.customers.Customer;
 
 public class Room {
@@ -14,6 +16,8 @@ public class Room {
 	private String options[];
 	
 	private Customer customers[];
+	private LocalDate startDates[];
+	private LocalDate endDates[];
 	
 	public Room(String roomType, String view,String maxPer , String size, String price, String options[]) {
 		setRoomType(roomType);
@@ -22,7 +26,9 @@ public class Room {
 		setMaxPer(maxPer);
 		setPrice(price);
 		setOptions(options);
-		customers = new Customer[3];
+		setCustomers(new Customer[3]);
+		setStartDates(new LocalDate[3]);
+		setEndDates(new LocalDate[3]);
 	}
 
 	public String getRoomType() {
@@ -80,6 +86,22 @@ public class Room {
 
 	public void setMaxPer(String maxPer) {
 		this.maxPer = maxPer;
+	}
+
+	public LocalDate[] getStartDates() {
+		return startDates;
+	}
+
+	public void setStartDates(LocalDate startDates[]) {
+		this.startDates = startDates;
+	}
+
+	public LocalDate[] getEndDates() {
+		return endDates;
+	}
+
+	public void setEndDates(LocalDate endDates[]) {
+		this.endDates = endDates;
 	}
 	
 	

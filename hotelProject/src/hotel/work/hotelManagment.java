@@ -1,7 +1,9 @@
 package hotel.work;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
+import hotel.customers.Customer;
 import hotel.rooms.Room;
 
 public class hotelManagment {
@@ -42,7 +44,7 @@ public class hotelManagment {
 
 			switch(userChoice.toUpperCase()){
 				case "A" :
-					System.out.println("test A");
+					hotelStatus();
 					break;
 				case "B" :
 					System.out.println("test B");
@@ -109,9 +111,33 @@ public class hotelManagment {
 					nbPrev++;
 				}
 			
+				
 		}
 		
 		return hotel;
+	}
+	
+	public void hotelStatus() {
+		for (int i = 0; i < hotel.length; i++) {
+			// On recupère les clients de la chambre i ainsi que les dates de debut et de fin de séjour
+			Customer customers[] = hotel[i].getCustomers();
+			LocalDate startDates[] = hotel[i].getStartDates();
+			LocalDate endDates[] = hotel[i].getEndDates();
+			boolean isFree = true;
+			
+			// si il y a au moins un client alors la chambre n'est pas "vide" donc on affiche les informations de la reservation 
+			for (int j = 0; j < customers.length; j++) {
+				if(customers[j] != null) {
+					isFree = false;
+					System.out.println("La chambre " + i + " de type " + hotel[i].getRoomType() + " est occupé par " + customers[j].getFirstName() + " " + customers[j].getLastName() + " du " + startDates[j] + " au " + endDates[j]);
+				}
+				
+			}
+			// Si elle est vide on affiche la chambre vide
+			if(isFree) {
+				System.out.println("La chambre numéro " + i + " de type " + hotel[i].getRoomType() + " est libre.");
+			}
+		}
 	}
 	
 	
