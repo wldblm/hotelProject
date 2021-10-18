@@ -65,7 +65,7 @@ public class hotelManagment {
 							System.out.println("test E");
 							break;
 						case "F" :
-							System.out.println("test F");
+							setReservation(in, userChoice);
 							break;
 						case "G" :
 							System.out.println("test G");
@@ -74,7 +74,7 @@ public class hotelManagment {
 							System.out.println("test H");
 							break;
 						case "I" :
-							System.out.println("test I");
+							deleteReservation(in);
 							break;
 					}
 		        } // fin du menu pour un employé
@@ -137,7 +137,7 @@ public class hotelManagment {
 			
 			// si la date donnée est entre la date de debut et de fin alors la chambre est occupée
 			for (int j = 0; j < customers.length; j++) {
-				if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
+				if(customers[j] != null && startDates[j].isBefore(response.plusDays(1)) && endDates[j].isAfter(response.minusDays(1))) {
 					isFree = false;
 					System.out.println("La chambre " + i + " de type " + hotel[i].getRoomType() + " est occupé par " + customers[j].getFirstName() + " " + customers[j].getLastName() + " du " + startDates[j] + " au " + endDates[j]);
 				}
@@ -163,7 +163,7 @@ public class hotelManagment {
 			
 			// // si la date donnée est entre la date de debut et de fin alors la chambre est occupée
 			for (int j = 0; j < customers.length; j++) {
-				if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
+				if(customers[j] != null && startDates[j].isBefore(response.plusDays(1)) && endDates[j].isAfter(response.minusDays(1))) {
 					allFree = false;
 					count ++; // On incrémente un compteur
 					if(i == 64) {
@@ -197,13 +197,14 @@ public class hotelManagment {
 					LocalDate startDates[] = hotel[i].getStartDates();
 					LocalDate endDates[] = hotel[i].getEndDates();
 					
-					// si la date donnée est entre la date de debut et de fin alors la chambre est occupée
 					for (int j = 0; j < customers.length; j++) {
-						if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
+						// si on entre dans cette condition c'est que la chambre est occupée
+						if(customers[j] != null && startDates[j].isBefore(response.plusDays(1)) && endDates[j].isAfter(response.minusDays(1))) {
 							free = false;
 							break;
 						}		
 					}
+					// Sinon c'est que la chambre est libre alors on l'affiche
 					if(free) {
 						System.out.println("La première chambre libre est la chambre numéro " + i + " de type " + hotel[i].getRoomType());
 						allOccupied = false;
@@ -232,19 +233,21 @@ public class hotelManagment {
 			
 			for (int j = 0; j < customers.length; j++) {
 				
-				if(customers[j] != null && startDates[j].isBefore(response) && endDates[j].isAfter(response)) {
-					allOccupied = false;
+				// Si on rentre dans cette condition c'est que la chambre est occupée
+				if(customers[j] != null && startDates[j].isBefore(response.plusDays(1)) && endDates[j].isAfter(response.minusDays(1))) {
 					free = false;
 					break;
 				}
 			}
+			// Si on a bouclé sur les 3 clients et que la chambre n'est pas occupée alors on incremente count
 			if(free) {
+				allOccupied = false;
 				count ++;
 				if(i == 64) {
 					System.out.println(count + " chambres libre de type " + hotel[i].getRoomType());
 					break;
 				}
-				// Si la chambre d'apres n'est pas du meme type on afficher le nombre de chambre occupées du type actuel et on remet le compteur a 0
+				// Si la chambre d'apres n'est pas du meme type on afficher le nombre de chambre libre du type actuel et on remet le compteur a 0
 				else if(!hotel[i].getRoomType().equals(hotel[i+1].getRoomType())) {
 					System.out.println(count + " chambres libre de type " + hotel[i].getRoomType());
 					count = 0;
@@ -256,8 +259,47 @@ public class hotelManagment {
 		}
 	}
 	
+	public void deleteReservation(Scanner in) {
+		System.out.println("Veuillez saisir le nom auquel la reservation à été faite");
+		String lastName = in.next();
+		
+		System.out.println("Veuillez saisir le prénom auquel la reservation à été faite");
+		String firstName  = in.next();
+		
+		System.out.println("Veuillez saisir la date du début de la réservation que vous souhaitez annuler auquel la reservation à été faite");
+		LocalDate startDate = askDate(in);
+		
+		System.out.println("Veuillez saisir la date de fin de la réservation que vous souhaitez annuler auquel la reservation à été faite");
+		LocalDate endDate = askDate(in);
+		
+		boolean notFound = true;
+		
+		for (int i = 0; i < hotel.length; i++) {
+			Customer customers[] = hotel[i].getCustomers();
+			LocalDate startDates[] = hotel[i].getStartDates();
+			LocalDate endDates[] = hotel[i].getEndDates();
+			
+				for (int j = 0; j < customers.length; j++) {
+					if(customers[j] != null && firstName.equalsIgnoreCase(customers[j].getFirstName()) && lastName.equalsIgnoreCase(customers[j].getLastName()) && startDate.equals(startDates[j]) && endDate.equals(endDates[j])) {
+						customers[j] = null;
+						startDates[j] = null;
+						endDates[j] = null;
+						notFound = false;
+						System.out.println("La réservation de Monsieur " + lastName + " " + firstName + " du " +  startDate  + " au " + endDate + " à bien été supprimée.");
+						break;
+					}
+				}
+				if(!notFound) {
+					break;
+				}
+		}
+		if(notFound) {
+			System.out.println("Pas de réservation correspondante");
+		}
+	}
+	
 	public LocalDate askDate(Scanner in) {
-		System.out.println("Insérer l'année à laquelle vous souhaitez afficher l'état de l'hotel");
+		System.out.println("Insérer l'année ");
 		String year = in.next();
 		System.out.println("Insérer le mois ");
 		String month = in.next();
@@ -268,30 +310,243 @@ public class hotelManagment {
 		return response;
 	}
 	
-	public void displayClientResa(String userChoice) {
+	public int firstAvailableRoomByType(Scanner in, LocalDate currentDate, LocalDate resaStart, LocalDate resaEnd, String userChoice) {
+		int count = 0;
+		int fARBTIndex = 0;
+		String selection = "";
+		// Compteur du nombre de créneaux ok pour le client par chambre.
+		// Pour que la chambre puisse être réservée, tous les crénaux doivent être validée
+		// le compteur doit être à 3.
+		for (int i = 0; i < hotel.length; i++) {
+			if(hotel[i].getRoomType().equals("Chambre Vue Piscine")) {
+				selection = "1";
+			} else if (hotel[i].getRoomType().equals("Chambre Vue Jardin")) {
+				selection = "2";
+			} else if (hotel[i].getRoomType().equals("Chambre Vue Océan")) {
+				selection = "3";
+			} else if (hotel[i].getRoomType().equals("Chambre Vue imprenable sur l'océan")) {
+				selection = "4";
+			} else if (hotel[i].getRoomType().equals("Suite CDA")) {
+				selection = "5";
+			} else if (hotel[i].getRoomType().equals("Suite Executive")) {
+				selection = "6";
+			} else if (hotel[i].getRoomType().equals("Suite Ambassadeur")) {
+				selection = "7";
+			} else if (hotel[i].getRoomType().equals("Suite Royale")) {
+				selection = "8";
+			}
+			if(userChoice.equals(selection)) {
+				Customer customers[] = hotel[i].getCustomers();
+				LocalDate startDates[] = hotel[i].getStartDates();
+				LocalDate endDates[] = hotel[i].getEndDates();
+				count = 0;
+				for (int j = 0; j < customers.length; j++) {
+					if(customers[j] == null) {
+						count++;
+					}
+					if((customers[j] != null) && ((endDates[j].isBefore(resaStart)) || (startDates[j].isAfter(resaEnd)))) {
+						count++;
+					}
+					if(count == 3) {
+						fARBTIndex = i;
+						count = 0;
+						i = hotel.length;
+						break;
+					}
+				}
+			}
+		}
+		return fARBTIndex;
+	}
+	
+	public void allAvailableRoomsToReserve(LocalDate currentDate, LocalDate resaStart, LocalDate resaEnd) {
+		int count = 0;
+		// Compteur du nombre de créneaux ok pour le client par chambre.
+		// Pour que la chambre puisse être réservée, tous les crénaux doivent être validée
+		// le compteur doit être à 3.
 
-//		if(userChoice.equals("0000000000")) {
+		if(currentDate.isBefore(resaStart)) { // Si la date est apr�s la date actuelle...
+			for (int i = 0; i < hotel.length; i++) {
+				Customer customers[] = hotel[i].getCustomers();
+				LocalDate startDates[] = hotel[i].getStartDates();
+				LocalDate endDates[] = hotel[i].getEndDates();
+				count = 0;
+				for (int j = 0; j < customers.length; j++) {
+					if(customers[j] == null) {
+						count++;
+					}
+					if((customers[j] != null) && ((endDates[j].isBefore(resaStart)) || (startDates[j].isAfter(resaEnd)))) {
+						count++;
+					}
+					if(count == 3) {
+						System.out.println("Chambre " + i + " de type " + hotel[i].getRoomType());
+						count = 0;
+					} else if ((i == hotel.length-1) && (j == customers.length-1) && (count < 3)) {
+						System.out.println("Toutes les chambres sont actuellement occup�es.");
+					}
+				}
+			}
+		} else {
+			System.out.println("Veuillez donner une date ult�rieur � celle d'aujourd'hui.");
+		}
+	}
+	
+	public void setReservation(Scanner in, String userChoice) {
+		LocalDate currentDate = LocalDate.now(); // date d'aujourd'hui
+		
+		System.out.println("Date du début de la réservation :");
+		LocalDate resaStart = askDate(in);
+		System.out.println("Date de fin de la réservation :");
+		LocalDate resaEnd = askDate(in);
+
+		System.out.println("Recherche de toutes les chambres libres à cette date :");
+		allAvailableRoomsToReserve(resaStart, resaEnd, currentDate);
+
+		System.out.println("Nombre d'adultes ?");
+		int adultBeds = in.nextInt();
+		System.out.println("Nombre d'enfants ?");
+		int childBeds = in.nextInt();
+		int bedroomCount = 0;
+		if((adultBeds > 2) || (childBeds > 2)) {
+			System.out.println("Les clients sont trop nombreux pour la capacité de la chambre.");
+			if((adultBeds/2 > childBeds/2) || (adultBeds/2 == childBeds/2)) {
+				bedroomCount = (adultBeds/2);
+			} else {
+				bedroomCount = (childBeds/2);
+			}
+			System.out.println("Ils devront réserver " + (bedroomCount-1) + " chambre(s) supplémentaire(s).");
+		}
+		int fARBTIndex = 0;
+		System.out.println("Montrer au client la carte des types de chambre en lui indiquant celles qui seront diponible à la date qu'il souhaite.");
+		System.out.println("Nom du client");
+		String clientFirstName = in.next();
+		System.out.println("Prénom du client :");
+		String clientLastName = in.next();
+		System.out.println("Pour quitter la réservation appuyer sur 'Q'.");
+		System.out.println(" ");
+		do {
+			if (userChoice.toUpperCase().charAt(0) == 'Q') {
+				System.out.println("La r�servation a �t� annul�e.");
+				break;
+			}
+			if(bedroomCount > 0) {
+				System.out.println("Il reste " + bedroomCount + " chambre(s) � r�server.");
+				System.out.println(" ");
+			}
+			System.out.println("Voici les chambres encore disponibles � cette date :");
+			allAvailableRoomsToReserve(resaStart, resaEnd, currentDate);
+			System.out.println(" ");
+			System.out.println("Choisir le type de chambre :");
+			System.out.println("-------------------------------");
+			System.out.println("1 - Chambre Vue Piscine");
+			System.out.println("2 - Chambre Vue Jardin");
+			System.out.println("3 - Chambre Vue Oc�an");
+			System.out.println("4 - Chambre Vue imprenable sur l'oc�an");
+			System.out.println("5 - Suite CDA");
+			System.out.println("6 - Suite Executive");
+			System.out.println("7 - Suite Ambassadeur");
+			System.out.println("8 - Suite Royale");
+			System.out.println("-------------------------------");
+			userChoice = in.next();
+			fARBTIndex = firstAvailableRoomByType(in, currentDate, resaStart, resaEnd, userChoice); // Index de la 1ere chambre libre par type
+			Customer fARBTCustomers[] = hotel[fARBTIndex].getCustomers(); // initialisation d'un nouveau client
+			LocalDate fARBTStartingDate[] = hotel[fARBTIndex].getStartDates(); // initialisation d'un nouveau d�but de date de r�sa 
+			LocalDate fARBTEndingDate[] = hotel[fARBTIndex].getEndDates(); // initialisation d'une nouvelle fin de date se r�sa
+			for (int i = 0; i < 3; i++) {
+				if(fARBTCustomers[i] == null) { // si l'emplacement de r�sa est libre...
+					fARBTCustomers[i] = new Customer(clientFirstName, clientLastName);
+					fARBTStartingDate[i] = resaStart;
+					fARBTEndingDate[i] = resaEnd;
+					break;
+				}
+			}
+			bedroomCount--;
+		} while (bedroomCount > 0);
+		System.out.println(" ");
+		System.out.println("R�servation effectu�e avec succ�s.");
+		System.out.println(" ");
+		getClientByNames(clientFirstName, clientLastName);
+		System.out.println(" ");
+		System.out.println("Retour au menu employ� de l'h�tel.");
+		System.out.println(" ");
+		 // Il manque l'encaissement
+	}
+	
+	
+	public void displayClientResa(String userChoice) {
+		int userResaCount = 0;
+		boolean clientFound = false;
 		for (int k = 0; k < hotel.length; k++) {
 			Customer customers[] = hotel[k].getCustomers();
 			LocalDate startDates[] = hotel[k].getStartDates();
 			LocalDate endDates[] = hotel[k].getEndDates();
-			for (int l = 0; l < hotel.length; l++) {
-				if(userChoice.equals(customers[k].getLogin())) {
-					
-//					System.out.println("testing for a few seconds");
-					System.out.println("Bienvenue " + customers[k].getFirstName() + " " + customers[k].getLastName() +  ". Vous avez réservé la chambre " + hotel[k].getRoomType() + " au numéro " + k + ". Vos dates de réservation vont du  " + startDates[k] + " au " + endDates[k] + ".");
-
-			        TimerTask task = new TimerTask() {
-			            public void run() {  
-			        		System.out.println("Entrez votre identifiant pour vous connecter ou connaitre les détails de votre réservation :");
-			            }
-			        };
-			        Timer timer = new Timer("Timer");
-			        long delay = 3000L;
-			        timer.schedule(task, delay);
+			for (int l = 0; l < customers.length; l++) {
+				if((customers[l] != null) && (userChoice.equals(customers[l].getLogin()))) {
+					clientFound = true;
+					if(userResaCount == 0) {
+						System.out.println("Bienvenue " + customers[l].getFirstName() + " " + customers[l].getLastName() +  ".");
+						System.out.println("Vous avez r�serv� la chambre : " + hotel[k].getRoomType() + " au num�ro " + k + ". Vos dates de r�servation pour ce bien vont du " + startDates[l] + " au " + endDates[l] + ".");
+						userResaCount++;
+					}
+					else {
+						System.out.println("Vous avez aussi r�serv� la chambre : " + hotel[k].getRoomType() + " au num�ro " + k + ". Vos dates de r�servation pour ce bien vont du " + startDates[l] + " au " + endDates[l] + ".");
+					}
+				}
+				else {
+					if((k == hotel.length-1) && (clientFound == false)){
+						System.out.println("Vous ne semblez pas encore faire parti des clients de l'h�tel.");
+						k = hotel.length;
+						break;
+					}
 				}
 			}
-		}  
+		}
+        TimerTask task = new TimerTask() {
+            public void run() {  
+        		System.out.println("Entrez votre identifiant pour vous connecter ou connaitre les d�tails de votre r�servation :");
+            }
+        };
+        Timer timer = new Timer("Timer");
+        long delay = 4000L;
+        timer.schedule(task, delay);
+	}
+	
+	public void getClientByNames(String clientFirstName, String clientLastName) {
+		int userResaCount = 0;
+		boolean clientFound = false;
+		for (int k = 0; k < hotel.length; k++) {
+			Customer customers[] = hotel[k].getCustomers();
+			LocalDate startDates[] = hotel[k].getStartDates();
+			LocalDate endDates[] = hotel[k].getEndDates();
+			for (int l = 0; l < customers.length; l++) {
+				if((customers[l] != null) && (clientFirstName.equals(customers[l].getFirstName())) && (clientLastName.equals(customers[l].getLastName()))) {
+					clientFound = true;
+					if(userResaCount == 0) {
+						System.out.println(customers[l].getFirstName() + " " + customers[l].getLastName() +  ". Identifiant client : " + customers[l].getLogin());
+						System.out.println("Les dates de r�servation pour ce bien vont du " + startDates[l] + " au " + endDates[l] + ".");
+						System.out.println("Voici la liste des chambres qu'il a r�serv� :");
+						System.out.println(hotel[k].getRoomType() + " au num�ro " + k + ".");
+						userResaCount++;
+					} else {
+						System.out.println(hotel[k].getRoomType() + " au num�ro " + k + ".");
+					}
+				} else {
+					if((k == hotel.length-1) && (clientFound == false)){
+						System.out.println("D�sol� il semble qu'il y ai eu une erreur dans la r�servation.");
+						k = hotel.length;
+						break;
+					}
+				}
+			}
+		}
+        TimerTask task = new TimerTask() {
+            public void run() {  
+        		System.out.println("Entrez votre identifiant pour vous connecter ou connaitre les d�tails de votre r�servation :");
+            }
+        };
+        Timer timer = new Timer("Timer");
+        long delay = 4000L;
+        timer.schedule(task, delay);
 	}
 	
 }
