@@ -426,22 +426,22 @@ public class hotelManagment {
 		System.out.println(" ");
 		do {
 			if (userChoice.toUpperCase().charAt(0) == 'Q') {
-				System.out.println("La r�servation a �t� annul�e.");
+				System.out.println("La réservation a été annulée.");
 				break;
 			}
 			if(bedroomCount > 0) {
-				System.out.println("Il reste " + bedroomCount + " chambre(s) � r�server.");
+				System.out.println("Il reste " + bedroomCount + " chambre(s) à réserver.");
 				System.out.println(" ");
 			}
-			System.out.println("Voici les chambres encore disponibles � cette date :");
+			System.out.println("Voici les chambres encore disponibles à cette date :");
 			allAvailableRoomsToReserve(resaStart, resaEnd, currentDate);
 			System.out.println(" ");
 			System.out.println("Choisir le type de chambre :");
 			System.out.println("-------------------------------");
 			System.out.println("1 - Chambre Vue Piscine");
 			System.out.println("2 - Chambre Vue Jardin");
-			System.out.println("3 - Chambre Vue Oc�an");
-			System.out.println("4 - Chambre Vue imprenable sur l'oc�an");
+			System.out.println("3 - Chambre Vue Océan");
+			System.out.println("4 - Chambre Vue imprenable sur l'océan");
 			System.out.println("5 - Suite CDA");
 			System.out.println("6 - Suite Executive");
 			System.out.println("7 - Suite Ambassadeur");
@@ -450,10 +450,10 @@ public class hotelManagment {
 			userChoice = in.next();
 			fARBTIndex = firstAvailableRoomByType(in, currentDate, resaStart, resaEnd, userChoice); // Index de la 1ere chambre libre par type
 			Customer fARBTCustomers[] = hotel[fARBTIndex].getCustomers(); // initialisation d'un nouveau client
-			LocalDate fARBTStartingDate[] = hotel[fARBTIndex].getStartDates(); // initialisation d'un nouveau d�but de date de r�sa 
-			LocalDate fARBTEndingDate[] = hotel[fARBTIndex].getEndDates(); // initialisation d'une nouvelle fin de date se r�sa
+			LocalDate fARBTStartingDate[] = hotel[fARBTIndex].getStartDates(); // initialisation d'un nouveau début de date de résa 
+			LocalDate fARBTEndingDate[] = hotel[fARBTIndex].getEndDates(); // initialisation d'une nouvelle fin de date se résa
 			for (int i = 0; i < 3; i++) {
-				if(fARBTCustomers[i] == null) { // si l'emplacement de r�sa est libre...
+				if(fARBTCustomers[i] == null) { // si l'emplacement de résa est libre...
 					fARBTCustomers[i] = new Customer(clientFirstName, clientLastName);
 					fARBTStartingDate[i] = resaStart;
 					fARBTEndingDate[i] = resaEnd;
@@ -463,11 +463,11 @@ public class hotelManagment {
 			bedroomCount--;
 		} while (bedroomCount > 0);
 		System.out.println(" ");
-		System.out.println("R�servation effectu�e avec succ�s.");
+		System.out.println("Réservation effectuée avec succés.");
 		System.out.println(" ");
 		getClientByNames(clientFirstName, clientLastName);
 		System.out.println(" ");
-		System.out.println("Retour au menu employ� de l'h�tel.");
+		System.out.println("Retour au menu employé de l'hôtel.");
 		System.out.println(" ");
 		 // Il manque l'encaissement
 	}
@@ -523,16 +523,16 @@ public class hotelManagment {
 					clientFound = true;
 					if(userResaCount == 0) {
 						System.out.println(customers[l].getFirstName() + " " + customers[l].getLastName() +  ". Identifiant client : " + customers[l].getLogin());
-						System.out.println("Les dates de r�servation pour ce bien vont du " + startDates[l] + " au " + endDates[l] + ".");
-						System.out.println("Voici la liste des chambres qu'il a r�serv� :");
-						System.out.println(hotel[k].getRoomType() + " au num�ro " + k + ".");
+						System.out.println("Les dates de réservation pour ce bien vont du " + startDates[l] + " au " + endDates[l] + ".");
+						System.out.println("Voici la liste des chambres qu'il a réservé :");
+						System.out.println(hotel[k].getRoomType() + " au numéro " + k + ".");
 						userResaCount++;
 					} else {
-						System.out.println(hotel[k].getRoomType() + " au num�ro " + k + ".");
+						System.out.println(hotel[k].getRoomType() + " au numéro " + k + ".");
 					}
 				} else {
 					if((k == hotel.length-1) && (clientFound == false)){
-						System.out.println("D�sol� il semble qu'il y ai eu une erreur dans la r�servation.");
+						System.out.println("Désolé il semble qu'il y ai eu une erreur dans la réservation.");
 						k = hotel.length;
 						break;
 					}
@@ -541,7 +541,7 @@ public class hotelManagment {
 		}
         TimerTask task = new TimerTask() {
             public void run() {  
-        		System.out.println("Entrez votre identifiant pour vous connecter ou connaitre les d�tails de votre r�servation :");
+        		System.out.println("Entrez votre identifiant pour vous connecter ou connaitre les détails de votre réservation :");
             }
         };
         Timer timer = new Timer("Timer");
