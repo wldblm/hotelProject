@@ -71,7 +71,7 @@ public class hotelManagment {
 							System.out.println("test G");
 							break;
 						case "H" :
-							System.out.println("test H");
+							editReservation(in);
 							break;
 						case "I" :
 							deleteReservation(in);
@@ -266,10 +266,10 @@ public class hotelManagment {
 		System.out.println("Veuillez saisir le prénom auquel la reservation à été faite");
 		String firstName  = in.next();
 		
-		System.out.println("Veuillez saisir la date du début de la réservation que vous souhaitez annuler auquel la reservation à été faite");
+		System.out.println("Veuillez saisir la date du début de la réservation que vous souhaitez annuler");
 		LocalDate startDate = askDate(in);
 		
-		System.out.println("Veuillez saisir la date de fin de la réservation que vous souhaitez annuler auquel la reservation à été faite");
+		System.out.println("Veuillez saisir la date de fin de la réservation que vous souhaitez annuler");
 		LocalDate endDate = askDate(in);
 		
 		boolean notFound = true;
@@ -297,6 +297,46 @@ public class hotelManagment {
 			System.out.println("Pas de réservation correspondante");
 		}
 	}
+	
+	public void editReservation(Scanner in) {
+		System.out.println("Veuillez saisir le nom auquel la reservation à été faite");
+		String lastName = in.next();
+		
+		System.out.println("Veuillez saisir le prénom auquel la reservation à été faite");
+		String firstName  = in.next();
+		
+		System.out.println("Veuillez saisir la date du début de la réservation que vous souhaitez modifer");
+		LocalDate startDate = askDate(in);
+		
+		System.out.println("Veuillez saisir la date de fin de la réservation que vous souhaitez modifier");
+		LocalDate endDate = askDate(in);
+		
+		boolean notFound = true;
+		
+		for (int i = 0; i < hotel.length; i++) {
+			Customer customers[] = hotel[i].getCustomers();
+			LocalDate startDates[] = hotel[i].getStartDates();
+			LocalDate endDates[] = hotel[i].getEndDates();
+			
+				for (int j = 0; j < customers.length; j++) {
+					if(customers[j] != null && firstName.equalsIgnoreCase(customers[j].getFirstName()) && lastName.equalsIgnoreCase(customers[j].getLastName()) && startDate.equals(startDates[j]) && endDate.equals(endDates[j])) {
+						System.out.println("Veuillez saisir la nouvelle date de debut de reservation");
+						startDates[j] = askDate(in);
+						endDates[j] = askDate(in);
+						notFound = false;
+						System.out.println("La réservation de Monsieur  " + lastName + " " + firstName + " à bien été modifié du " +  startDate  + " au " + endDate);
+						break;
+					}
+				}
+				if(!notFound) {
+					break;
+				}
+		}
+		if(notFound) {
+			System.out.println("Pas de réservation correspondante");
+		}
+	}
+	
 	
 	public LocalDate askDate(Scanner in) {
 		System.out.println("Insérer l'année ");
@@ -419,9 +459,9 @@ public class hotelManagment {
 		int fARBTIndex = 0;
 		System.out.println("Montrer au client la carte des types de chambre en lui indiquant celles qui seront diponible à la date qu'il souhaite.");
 		System.out.println("Nom du client");
-		String clientFirstName = in.next();
+		String lastName = in.next();
 		System.out.println("Prénom du client :");
-		String clientLastName = in.next();
+		String firstName = in.next();
 		System.out.println("Pour quitter la réservation appuyer sur 'Q'.");
 		System.out.println(" ");
 		do {
@@ -454,7 +494,7 @@ public class hotelManagment {
 			LocalDate fARBTEndingDate[] = hotel[fARBTIndex].getEndDates(); // initialisation d'une nouvelle fin de date se résa
 			for (int i = 0; i < 3; i++) {
 				if(fARBTCustomers[i] == null) { // si l'emplacement de résa est libre...
-					fARBTCustomers[i] = new Customer(clientFirstName, clientLastName);
+					fARBTCustomers[i] = new Customer(firstName, lastName);
 					fARBTStartingDate[i] = resaStart;
 					fARBTEndingDate[i] = resaEnd;
 					break;
@@ -465,7 +505,7 @@ public class hotelManagment {
 		System.out.println(" ");
 		System.out.println("Réservation effectuée avec succés.");
 		System.out.println(" ");
-		getClientByNames(clientFirstName, clientLastName);
+		getClientByNames(firstName, lastName);
 		System.out.println(" ");
 		System.out.println("Retour au menu employé de l'hôtel.");
 		System.out.println(" ");
