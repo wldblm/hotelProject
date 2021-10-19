@@ -1,8 +1,11 @@
 package hotel.work;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,8 +21,7 @@ public class hotelManagment {
 		hotel = generate();
 		Scanner in = new Scanner(System.in);
 		String userChoice = "";
-		String employeLoggin = "emLog";
-        String employePassword = "emPw";		
+		String employeLoggin = "emLog";		
 		System.out.println("Entrez votre identifiant pour vous connecter ou connaitre les détails de votre réservation :");
 		while(true) { // boucle sur l'identification
 			userChoice = in.next();
@@ -62,18 +64,21 @@ public class hotelManagment {
 							firstFreeRoom(in);
 							break;
 						case "E" :
-							System.out.println("test E");
+							lastFreeRoom(in);
 							break;
 						case "F" :
+							login(in);
 							setReservation(in, userChoice);
 							break;
 						case "G" :
 							System.out.println("test G");
 							break;
 						case "H" :
+							login(in);
 							editReservation(in);
 							break;
 						case "I" :
+							login(in);
 							deleteReservation(in);
 							break;
 					}
@@ -139,7 +144,7 @@ public class hotelManagment {
 			for (int j = 0; j < customers.length; j++) {
 				if(customers[j] != null && startDates[j].isBefore(response.plusDays(1)) && endDates[j].isAfter(response.minusDays(1))) {
 					isFree = false;
-					System.out.println("La chambre " + i + " de type " + hotel[i].getRoomType() + " est occupé par " + customers[j].getFirstName() + " " + customers[j].getLastName() + " du " + startDates[j] + " au " + endDates[j]);
+					System.out.println("La chambre " + i + " de type " + hotel[i].getRoomType() + " est occupé par " + customers[j].getFirstName() + " " + customers[j].getLastName() + " du " + startDates[j].format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)) + " au " + endDates[j].format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)));
 				}
 				
 			}
@@ -218,6 +223,39 @@ public class hotelManagment {
 					System.out.println("Aucune chambre n'est libre");
 				}
 	}
+public void lastFreeRoom(Scanner  in) {
+		
+		// On recupère la date à laquelle on veut afficher la chambre libre;
+				LocalDate response = askDate(in);	
+				boolean allOccupied = true;
+				boolean free = true;
+				for (int i = hotel.length - 1; i > 0; i++) {
+					Customer customers[] = hotel[i].getCustomers();
+					LocalDate startDates[] = hotel[i].getStartDates();
+					LocalDate endDates[] = hotel[i].getEndDates();
+					
+					for (int j = 0; j < customers.length; j++) {
+						// si on entre dans cette condition c'est que la chambre est occupée
+						if(customers[j] != null && startDates[j].isBefore(response.plusDays(1)) && endDates[j].isAfter(response.minusDays(1))) {
+							free = false;
+							break;
+						}		
+					}
+					// Sinon c'est que la chambre est libre alors on l'affiche
+					if(free) {
+						System.out.println("La dernière chambre libre est la chambre numéro " + i + " de type " + hotel[i].getRoomType());
+						allOccupied = false;
+						break;
+					}
+					if(!allOccupied){
+						break;
+					}
+				}
+				if(allOccupied) {
+					System.out.println("Aucune chambre n'est libre");
+				}
+	}
+	
 	
 	public void getFreeRooms(Scanner in) {
 		// On recupère la date à laquelle on veut afficher les chambres libre;
@@ -285,7 +323,7 @@ public class hotelManagment {
 						startDates[j] = null;
 						endDates[j] = null;
 						notFound = false;
-						System.out.println("La réservation de Monsieur " + lastName + " " + firstName + " du " +  startDate  + " au " + endDate + " à bien été supprimée.");
+						System.out.println("La réservation de Monsieur " + lastName + " " + firstName + " du " +  startDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE))  + " au " + endDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)) + " à bien été supprimée.");
 						break;
 					}
 				}
@@ -320,11 +358,28 @@ public class hotelManagment {
 			
 				for (int j = 0; j < customers.length; j++) {
 					if(customers[j] != null && firstName.equalsIgnoreCase(customers[j].getFirstName()) && lastName.equalsIgnoreCase(customers[j].getLastName()) && startDate.equals(startDates[j]) && endDate.equals(endDates[j])) {
+						// On demande a l'utilisateur de saisir une nouvelle date de début
 						System.out.println("Veuillez saisir la nouvelle date de debut de reservation");
-						startDates[j] = askDate(in);
-						endDates[j] = askDate(in);
+						startDate = askDate(in);
+						
+						// Tant que la date de début est inferieur a la date du jour on demande une nouvelle date
+						while(startDate.isBefore(LocalDate.now())) {
+							System.out.println("La date de début est inferieur a la date du jour veuillez saisir une autre date");
+							startDate = askDate(in);
+						}
+						startDates[j] = startDate;
+						
+						// On demande a l'utilisateur de saisir une nouvelle date de fin
+						System.out.println("Veuillez saisir la nouvelle date de fin de reservation");
+						
+						// Tant que la date de début est inferieur a la date du debut on demande une nouvelle date
+						while(endDate.isBefore(startDate)) {
+							System.out.println("La date de fin est inferieur a la date du début du séjour veuillez saisir une autre date de fin" );
+							endDate = askDate(in);
+						}
+						endDates[j] = endDate;
 						notFound = false;
-						System.out.println("La réservation de Monsieur  " + lastName + " " + firstName + " à bien été modifié du " +  startDate  + " au " + endDate);
+						System.out.println("La réservation de Monsieur  " + lastName + " " + firstName + " à bien été modifié du " +  startDates[j].format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE))  + " au " + endDates[j].format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)));
 						break;
 					}
 				}
@@ -343,8 +398,14 @@ public class hotelManagment {
 		String year = in.next();
 		System.out.println("Insérer le mois ");
 		String month = in.next();
+		if(month.length() == 1) {
+			month = "0" + month;
+		}
 		System.out.println("Insérer le jour ");
 		String day = in.next();
+		if(day.length() == 1) {
+			day = "0" + day;
+		}
 		String date = year + "-" + month + "-" + day;
 		LocalDate response = LocalDate.parse(date);
 		return response;
@@ -587,6 +648,17 @@ public class hotelManagment {
         Timer timer = new Timer("Timer");
         long delay = 4000L;
         timer.schedule(task, delay);
+	}
+	
+	// Login employé
+	
+	public void login(Scanner in) {
+		System.out.println("Veuillez saisir votre mot de passe");
+		String response = in.next();
+		while(!response.equals("password")) {
+			System.out.println("Mot de passe érroné veuillez ressayer");
+			response = in.next();
+		}
 	}
 	
 }
